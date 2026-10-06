@@ -1,22 +1,110 @@
 import type { Metadata } from "next";
 import { Analytics } from "@vercel/analytics/react";
-import { Inter } from "next/font/google";
+import { Montserrat, Source_Serif_4, JetBrains_Mono } from "next/font/google";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { ThemeProvider } from "@/components/theme-provider";
-import { PostHogProvider } from './providers'
+import { PostHogProvider } from "./providers";
+import { RESUME_DATA } from "@/data/resume-data";
 
 import "./globals.css";
 import React from "react";
 
+const SITE_URL = "https://whoisharsh.space";
+const AVATAR_URL = "/pfp-image.png";
+const TITLE = `${RESUME_DATA.name} | Infra & Backend Engineer at Freebuff (YC F24)`;
+const DESCRIPTION =
+  "Harsh Kasat builds sandbox infrastructure for AI coding agents at Freebuff (YC F24): Daytona and E2B fleets, Convex backends, Bun/TypeScript runner services. Ex-founding engineer at vly.ai. Remote from India.";
+const KEYWORDS = [
+  "Harsh Kasat",
+  "Software Engineer",
+  "Infrastructure Engineer",
+  "Backend Engineer",
+  "Freebuff",
+  "Codebuff",
+  "vly.ai",
+  "Y Combinator",
+  "AI coding agents",
+  "Sandbox infrastructure",
+  "Daytona",
+  "E2B",
+  "Convex",
+  "Bun",
+  "TypeScript",
+  "Python",
+  "Go",
+  "FastAPI",
+  "Django",
+  "BullMQ",
+  "Redis",
+  "Docker",
+  "Vercel",
+  "Render",
+  "Claude Code",
+  "MCP",
+  "LangChain",
+  "SymPy contributor",
+  "Remote developer India",
+  "Surat",
+  "Portfolio",
+];
+
 export const metadata: Metadata = {
-  title: "Harsh Kasat",
-  description: "Harsh Kasat Portfolio | A dev with chaotic thoughts and fluppy code, I learn by building product, breaking things is part of process. Mostly work remote because why not ? more into low-level and tinkering around system ",
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: TITLE,
+    template: `%s | ${RESUME_DATA.name}`,
+  },
+  description: DESCRIPTION,
+  keywords: KEYWORDS,
+  authors: [{ name: RESUME_DATA.name, url: SITE_URL }],
+  creator: RESUME_DATA.name,
+  applicationName: `${RESUME_DATA.name} Portfolio`,
+  alternates: { canonical: SITE_URL },
+  robots: { index: true, follow: true },
+  openGraph: {
+    type: "profile",
+    url: SITE_URL,
+    title: TITLE,
+    description: DESCRIPTION,
+    siteName: `${RESUME_DATA.name} Portfolio`,
+    images: [{ url: AVATAR_URL, width: 512, height: 512, alt: RESUME_DATA.name }],
+    firstName: "Harsh",
+    lastName: "Kasat",
+    username: "harshkasat",
+  },
+  twitter: {
+    card: "summary",
+    site: "@harsh__kasat",
+    creator: "@harsh__kasat",
+    title: TITLE,
+    description: DESCRIPTION,
+    images: [AVATAR_URL],
+  },
+  icons: { icon: "/favicon.ico" },
+  appleWebApp: {
+    capable: true,
+    title: `${RESUME_DATA.name} Portfolio`,
+    statusBarStyle: "black-translucent",
+  },
+  other: {
+    "theme-color": "#18181b",
+    "msapplication-TileColor": "#18181b",
+  },
 };
 
-// If loading a variable font, you don't need to specify the font weight
-const inter = Inter({
+const fontSans = Montserrat({
   subsets: ["latin"],
-  display: "swap",
+  variable: "--font-sans",
+});
+
+const fontSerif = Source_Serif_4({
+  subsets: ["latin"],
+  variable: "--font-serif",
+});
+
+const fontMono = JetBrains_Mono({
+  subsets: ["latin"],
+  variable: "--font-mono",
 });
 
 export default function RootLayout({
@@ -24,70 +112,61 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const siteUrl = "https://whoisharsh.space";
-  const avatarUrl = "/pfp-image.webp";
-  const jsonLd = {
+  const personLd = {
     "@context": "https://schema.org",
     "@type": "Person",
-    "name": "Harsh Kasat",
-    "url": siteUrl,
-    "image": `${siteUrl}${avatarUrl}`,
-    "sameAs": [
-      "https://github.com/harshkasat",
-      "https://www.linkedin.com/in/harshkasat/",
-      "https://x.com/harsh__kasat",
-      "https://drive.google.com/file/d/1hXeKhl6NDa97uGjL6F-ZW0DyfZn69gSx/view?usp=sharing",
-      "https://www.notion.so/Why-so-curious-1fbfcb5ecf638083bea5f99bc3d272ff"
+    name: RESUME_DATA.name,
+    url: SITE_URL,
+    image: `${SITE_URL}${AVATAR_URL}`,
+    sameAs: RESUME_DATA.contact.social.map((s) => s.url),
+    email: `mailto:${RESUME_DATA.contact.email}`,
+    jobTitle: "Software Engineer, Infrastructure",
+    worksFor: {
+      "@type": "Organization",
+      name: "Freebuff",
+      url: "https://freebuff.com/",
+    },
+    alumniOf: {
+      "@type": "CollegeOrUniversity",
+      name: RESUME_DATA.education[0].school,
+    },
+    knowsAbout: [
+      "Sandbox infrastructure",
+      "Daytona",
+      "E2B",
+      "Convex",
+      "TypeScript",
+      "Bun",
+      "Python",
+      "AI coding agents",
     ],
-    "email": "harshkasat01gmail.com",
-    "jobTitle": "Software Engineer",
-    "description": "A dev with chaotic thoughts and fluppy code, I learn by building product, breaking things is part of process. Mostly work remote because why not ? more into low-level and tinkering around system ",
-    "address": {
-      "@type": "PostalAddress",
-      "addressCountry": "India"
-    }
+    description: DESCRIPTION,
+    address: { "@type": "PostalAddress", addressCountry: "IN" },
   };
   const websiteLd = {
     "@context": "https://schema.org",
     "@type": "WebSite",
-    "url": siteUrl,
-    "name": "Harsh Kasat | Django Dev | Machine Learning",
-    "description": "A dev with chaotic thoughts and fluppy code, I learn by building product, breaking things is part of process. Mostly work remote because why not ? more into low-level and tinkering around system "
+    url: SITE_URL,
+    name: TITLE,
+    description: DESCRIPTION,
+    author: { "@type": "Person", name: RESUME_DATA.name },
   };
+
   return (
-    <html lang="en" className={inter.className} suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning>
       <head>
-        <meta charSet="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>Harsh Kasat | Django Dev | Machine Learning </title>
-        <meta name="description" content="A dev with chaotic thoughts and fluppy code, I learn by building product, breaking things is part of process. Mostly work remote because why not ? more into low-level and tinkering around system " />
-        <meta name="keywords" content="Harsh Kasat, Portfolio, Machine Learning, GENAI developer, Freelancer, Full stack developer, Django, Software Engineer, Python, AI, ML, DL, NLP, FastAPI, Flask, HuggingFace, Langchain, Llamaindex, AWS, Azure, Docker, Terraform, PostgreSQL, Firebase, Redis, MySQL, Supabase, JavaScript, Go, ELK, Kibana, ElasticSearch, Surat, India, Remote Developer, Personal Website, Resume, LinkedIn, GitHub, Notion, Projects, Education, Work Experience, Skills" />
-        <meta name="author" content="Harsh Kasat" />
-        <meta name="robots" content="index, follow" />
-        <meta name="theme-color" content="#18181b" />
-        <meta name="HandheldFriendly" content="True" />
-        <meta name="MobileOptimized" content="320" />
-        <meta name="application-name" content="Harsh Kasat Portfolio" />
-        <meta name="apple-mobile-web-app-title" content="Harsh Kasat Portfolio" />
-        <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-        <meta name="msapplication-TileColor" content="#18181b" />
-        <meta name="msapplication-TileImage" content="/pfp-image.webp" />
-        <meta property="og:title" content="Harsh Kasat | Django Dev | Machine Learning" />
-        <meta property="og:description" content="A dev with chaotic thoughts and fluppy code, I learn by building product, breaking things is part of process. Mostly work remote because why not ? more into low-level and tinkering around system " />
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content={siteUrl} />
-        <meta property="og:image" content={`${siteUrl}${avatarUrl}`} />
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Harsh Kasat | Django Dev | Machine Learning" />
-        <meta name="twitter:description" content="A dev with chaotic thoughts and fluppy code, I learn by building product, breaking things is part of process. Mostly work remote because why not ? more into low-level and tinkering around system " />
-        <meta name="twitter:image" content={`${siteUrl}${avatarUrl}`} />
-        <link rel="canonical" href={siteUrl} />
-        <link rel="icon" href="/favicon.ico" />
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteLd) }} />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(personLd) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteLd) }}
+        />
       </head>
-      <body>
+      <body
+        className={`${fontSans.variable} ${fontSerif.variable} ${fontMono.variable} font-sans antialiased`}
+      >
         <PostHogProvider>
           <ThemeProvider
             attribute="class"
@@ -95,9 +174,7 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange={false}
           >
-            <div className="theme-transition bg-background text-foreground duration-1000">
-              {children}
-            </div>
+            <div className="bg-background text-foreground">{children}</div>
             <SpeedInsights />
             <Analytics />
           </ThemeProvider>
