@@ -185,20 +185,24 @@
   }
 }
 
-/* Section reveal on first scroll into view (see components/ui/section.tsx) */
+/* Section reveal on first scroll into view (see components/ui/section.tsx).
+   Visible by default; only [data-reveal="hidden"] hides, so nothing can get stuck. */
 .section-reveal {
-  opacity: 0;
-  transform: translateY(20px);
   transition:
     opacity 0.5s cubic-bezier(0.22, 1, 0.36, 1),
     transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
 }
-.section-reveal[data-shown] {
+.section-reveal[data-reveal="hidden"] {
+  opacity: 0;
+  transform: translateY(20px);
+}
+.section-reveal[data-reveal="shown"] {
   opacity: 1;
   transform: none;
 }
 @media print, (prefers-reduced-motion: reduce) {
-  .section-reveal {
+  .section-reveal,
+  .section-reveal[data-reveal="hidden"] {
     opacity: 1;
     transform: none;
     transition: none;

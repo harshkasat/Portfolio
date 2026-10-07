@@ -8,32 +8,38 @@ export interface SectionProps {
   children?: React.ReactNode;
   /**
    * Fade the section in the first time it scrolls into view.
-   * Leave off for anything near the top of the page: hidden-until-JS content
-   * delays LCP, and the browser can paint plain sections immediately.
+   * Fail-open: the section is visible by default; it is only hidden once
+   * JS has confirmed it is below the fold, so content can never get stuck
+   * invisible and above-the-fold text never delays LCP.
    */
   reveal?: boolean;
 }
 
 export function Section({ className, children, reveal = false }: SectionProps) {
   const ref = React.useRef<HTMLElement>(null);
-  const [shown, setShown] = React.useState(!reveal);
+  const [state, setState] = React.useState<"visible" | "hidden" | "shown">(
+    "visible",
+  );
 
   React.useEffect(() => {
     if (!reveal) return;
     const el = ref.current;
-    if (!el) return;
-    if (!("IntersectionObserver" in window)) {
-      setShown(true);
-      return;
-    }
+    if (!el || !("IntersectionObserver" in window)) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    // Already on screen at mount: leave it visible, no animation.
+    const rect = el.getBoundingClientRect();
+    if (rect.top < window.innerHeight) return;
+
+    setState("hidden");
     const io = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          setShown(true);
+          setState("shown");
           io.disconnect();
         }
       },
-      { rootMargin: "0px 0px -10% 0px" },
+      { threshold: 0.05 },
     );
     io.observe(el);
     return () => io.disconnect();
@@ -42,12 +48,8 @@ export function Section({ className, children, reveal = false }: SectionProps) {
   return (
     <section
       ref={ref}
-      data-shown={shown || undefined}
-      className={cn(
-        "flex min-h-0 flex-col gap-y-3",
-        reveal && "section-reveal",
-        className,
-      )}
+      data-reveal={state === "visible" ? undefined : state}
+      className={cn("section-reveal flex min-h-0 flex-col gap-y-3", className)}
     >
       {children}
     </section>
