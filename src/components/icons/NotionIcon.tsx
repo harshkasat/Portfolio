@@ -1,10 +1,15 @@
-const NotionIcon = () => (
-  <img
-    src="https://upload.wikimedia.org/wikipedia/commons/e/e9/Notion-logo.svg"
-    alt="Notion Icon"
-    width={20}
-    height={20}
-  />
-)
+import type { SVGProps } from "react";
 
-export default NotionIcon
+const NotionIcon = (props: SVGProps<SVGSVGElement>) => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="currentColor"
+    aria-hidden="true"
+    focusable="false"
+    {...props}
+  >
+    <path d="M4.46 3.08 14.9 2.3c1.28-.11 1.61-.04 2.42.55l3.33 2.34c.55.4.73.51.73 .95v12.86c0 .8-.29 1.28-1.31 1.35l-12.1.73c-.77.04-1.14-.07-1.54-.59L4.1 17.3c-.44-.59-.62-1.03-.62-1.54V4.36c0-.66.29-1.2.98-1.28Zm10.65 1.46-9.4.66c-.76.07-.92.44-.62.8l1.17 1.5c.24.3.57.44 1.1.4l9.47-.57c.6-.04.8-.33.52-.66l-1.1-1.46c-.3-.4-.5-.73-1.14-.67ZM6.2 8.33v9.6c0 .52.26.7.84.67l10.4-.6c.58-.04.65-.4.65-.82V7.63c0-.42-.16-.65-.52-.62L6.74 7.6c-.4.04-.55.26-.55.73Zm10.25.63c.07.3 0 .6-.3.63l-.5.1v7.3c-.43.23-.83.37-1.16.37-.53 0-.66-.17-1.06-.66l-3.24-5.1v4.93l1.03.24s0 .6-.83.6l-2.3.13c-.07-.14 0-.47.23-.53l.6-.17v-6.54l-.83-.07c-.07-.3.1-.73.56-.77l2.47-.17 3.4 5.2v-4.6l-.87-.1c-.07-.37.2-.63.53-.66l2.27-.13Z" />
+  </svg>
+);
+
+export default NotionIcon;

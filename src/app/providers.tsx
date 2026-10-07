@@ -1,25 +1,48 @@
-// app/providers.tsx
-'use client'
+"use client";
 
-import { usePathname, useSearchParams } from "next/navigation"
-import { useEffect } from "react"
-import { usePostHog } from 'posthog-js/react'
+import { useEffect } from "react";
 
-import posthog from 'posthog-js'
-import { PostHogProvider as PHProvider } from 'posthog-js/react'
+const KEY = process.env.NEXT_PUBLIC_POSTHOG_KEY;
+const HOST = process.env.NEXT_PUBLIC_POSTHOG_HOST || "https://us.i.posthog.com";
 
+/**
+ * Loads PostHog after the page is idle. The SDK is imported dynamically so its
+ * ~57 KB never lands in the initial bundle; nothing on the page reads PostHog
+ * state, so a provider/context is not needed.
+ */
 export function PostHogProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
-    posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY as string, {
-      api_host: process.env.NEXT_PUBLIC_POSTHOG_HOST || 'https://us.i.posthog.com',
-      person_profiles: 'identified_only', // or 'always' to create profiles for anonymous users as well
-      defaults: '2025-05-24'
-    })
-  }, [])
+    if (!KEY) return;
+    let cancelled = false;
 
-  return (
-    <PHProvider client={posthog}>
-      {children}
-    </PHProvider>
-  )
+    const init = async () => {
+      const { default: posthog } = await import("posthog-js");
+      if (cancelled) return;
+      posthog.init(KEY, {
+        api_host: HOST,
+        person_profiles: "identified_only",
+        defaults: "2025-05-24",
+        persistence: "localStorage",
+        disable_surveys: true,
+        capture_dead_clicks: false,
+        capture_performance: false,
+        autocapture: false,
+      });
+    };
+
+    if ("requestIdleCallback" in window) {
+      const id = window.requestIdleCallback(() => void init(), { timeout: 3000 });
+      return () => {
+        cancelled = true;
+        window.cancelIdleCallback(id);
+      };
+    }
+    const t = setTimeout(() => void init(), 1500);
+    return () => {
+      cancelled = true;
+      clearTimeout(t);
+    };
+  }, []);
+
+  return <>{children}</>;
 }

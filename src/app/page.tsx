@@ -1,127 +1,44 @@
 "use client";
-import { useState, useMemo } from "react";
-import Head from "next/head";
-import { Avatar, AvatarImage } from "@/components/ui/avatar";
+import Image from "next/image";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Section } from "@/components/ui/section";
-import { GlobeIcon, MailIcon, Search, X } from "lucide-react";
+import { GlobeIcon, MailIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { RESUME_DATA } from "@/data/resume-data";
-import { ProjectCard } from "@/components/project-card";
 import { ModeToggle } from "@/components/ModeToggle";
-import Component from "@/components/ui/linear-card";
-
-// export const metadata = {
-//   title: `${RESUME_DATA.name} | ${RESUME_DATA.about}`,
-//   description: RESUME_DATA.summary,
-// };
+import { GitHubActivity } from "@/components/ui/github-activity";
 
 export default function Page() {
-  const [selectedCategory, setSelectedCategory] = useState("ALL");
-  const [searchTerm, setSearchTerm] = useState("");
-
-  // Define your project categories here.
-  // You could also derive them dynamically from your project data if needed.
-  const categories = useMemo(() => {
-    const allTech = RESUME_DATA.projects.reduce((acc, project) => {
-      project.techStack.forEach((tech) => acc.add(tech.toLowerCase()));
-      return acc;
-    }, new Set());
-    // Add specific categories you want to filter by.
-    // For simplicity, I'm using a predefined list, but you can customize this.
-    const predefinedCategories = ["AI", "website", "scraping"];
-    // You could also intersect `allTech` with a list of known categories if techStack contains them.
-    return predefinedCategories;
-  }, []);
-
-  const filteredProjects = useMemo(() => {
-    return RESUME_DATA.projects.filter((project) => {
-      const matchesCategory =
-        selectedCategory.toUpperCase() === "ALL" ||
-        project.techStack.some(
-          (tech) => tech.toLowerCase() === selectedCategory.toLowerCase(),
-        );
-
-      const matchesSearch =
-        searchTerm === "" ||
-        project.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        project.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        project.techStack.some((tech) =>
-          tech.toLowerCase().includes(searchTerm.toLowerCase()),
-        );
-
-      return matchesCategory && matchesSearch;
-    });
-  }, [selectedCategory, searchTerm]);
-  const siteUrl = "https://whoisharsh.space";
-  const avatarUrl = RESUME_DATA.avatarUrl.startsWith("./") ? `/pfp-image.webp` : RESUME_DATA.avatarUrl;
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "Person",
-    "name": RESUME_DATA.name,
-    "url": siteUrl,
-    "image": `${siteUrl}${avatarUrl}`,
-    "sameAs": RESUME_DATA.contact.social.map(s => s.url),
-    "email": RESUME_DATA.contact.email,
-    "jobTitle": "Software Engineer",
-    "description": RESUME_DATA.summary,
-    "address": {
-      "@type": "PostalAddress",
-      "addressCountry": RESUME_DATA.location
-    }
-  };
-  const websiteLd = {
-    "@context": "https://schema.org",
-    "@type": "WebSite",
-    "url": siteUrl,
-    "name": `${RESUME_DATA.name} | ${RESUME_DATA.about}`,
-    "description": RESUME_DATA.summary
-  };
   return (
     <>
-      <Head>
-        <title>{`${RESUME_DATA.name} | ${RESUME_DATA.about}`}</title>
-        <meta name="description" content={RESUME_DATA.summary} />
-        <meta name="keywords" content={RESUME_DATA.skills.join(", ")} />
-        <meta property="og:title" content={`${RESUME_DATA.name} | ${RESUME_DATA.about}`} />
-        <meta property="og:description" content={RESUME_DATA.summary} />
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content={siteUrl} />
-        <meta property="og:image" content={`${siteUrl}${avatarUrl}`} />
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={`${RESUME_DATA.name} | ${RESUME_DATA.about}`} />
-        <meta name="twitter:description" content={RESUME_DATA.summary} />
-        <meta name="twitter:image" content={`${siteUrl}${avatarUrl}`} />
-        <link rel="canonical" href={siteUrl} />
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteLd) }} />
-      </Head>
       <main className="container relative mx-auto scroll-my-12 overflow-auto p-4 print:p-12 md:p-16">
         {/* <BackgroundLines> */}
         <section className="mx-auto w-full max-w-4xl space-y-8 print:space-y-4">
-          <div className="flex flex-col gap-x-1 font-mono text-sm text-muted-foreground print:flex print:text-[12px]">
+          <div className="flex flex-col gap-x-1 text-sm text-muted-foreground print:flex print:text-[12px]">
             <ModeToggle />
           </div>
           <div className="flex items-center justify-between">
             <div className="flex-1 space-y-1.5">
-              <h1 className="text-2xl font-bold text-primary-foreground">
+              <h1 className="text-2xl font-bold text-foreground">
                 {RESUME_DATA.name}
               </h1>
-              <p className="max-w-md text-pretty font-mono text-sm text-muted-foreground print:text-[12px]">
+              <p className="max-w-md text-pretty text-sm text-muted-foreground print:text-[12px]">
                 {RESUME_DATA.about}
               </p>
-              <p className="max-w-md items-center text-pretty font-mono text-xs text-muted-foreground">
+              <p className="max-w-md items-center text-pretty text-xs text-muted-foreground">
                 <a
-                  className="inline-flex gap-x-1.5 align-baseline leading-none "
+                  className="inline-flex gap-x-1.5 align-baseline leading-none"
                   href={RESUME_DATA.locationLink}
                   target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`Location: ${RESUME_DATA.location}`}
                 >
-                  <GlobeIcon className="size-3" />
+                  <GlobeIcon className="size-3" aria-hidden="true" />
                   {RESUME_DATA.location}
                 </a>
               </p>
-              <div className="flex gap-x-1 pt-1 font-mono text-sm text-muted-foreground print:hidden">
+              <div className="flex gap-x-1 pt-1 text-sm text-muted-foreground print:hidden">
                 {RESUME_DATA.contact.email ? (
                   <Button
                     className="size-8"
@@ -131,9 +48,9 @@ export default function Page() {
                   >
                     <a
                       href={`mailto:${RESUME_DATA.contact.email}`}
-                      target="_blank"
+                      aria-label={`Email ${RESUME_DATA.name}`}
                     >
-                      <MailIcon className="size-4" />
+                      <MailIcon className="size-4" aria-hidden="true" />
                     </a>
                   </Button>
                 ) : null}
@@ -145,13 +62,18 @@ export default function Page() {
                     size="icon"
                     asChild
                   >
-                    <a href={social.url} target="_blank">
-                      <social.icon className="size-4" />
+                    <a
+                      href={social.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={social.name === "Resume" ? `CV — ${RESUME_DATA.name}'s resume` : `${RESUME_DATA.name} on ${social.name}`}
+                    >
+                      <social.icon className="size-4" aria-hidden="true" />
                     </a>
                   </Button>
                 ))}
               </div>
-              <div className="hidden flex-col gap-x-1 font-mono text-sm text-muted-foreground print:flex print:text-[12px]">
+              <div className="hidden flex-col gap-x-1 text-sm text-muted-foreground print:flex print:text-[12px]">
                 {RESUME_DATA.contact.email ? (
                   <a href={`mailto:${RESUME_DATA.contact.email}`}>
                     <span className="underline">
@@ -162,18 +84,24 @@ export default function Page() {
               </div>
             </div>
 
-            <Avatar className="size-28">
-              <AvatarImage alt={RESUME_DATA.name} src={RESUME_DATA.avatarUrl} />
-            </Avatar>
+            <Image
+              src={RESUME_DATA.avatarUrl}
+              alt={`Portrait of ${RESUME_DATA.name}`}
+              width={112}
+              height={112}
+              priority
+              sizes="112px"
+              className="size-28 shrink-0 rounded-xl object-cover"
+            />
           </div>
           <Section>
-            <h2 className="text-xl font-bold text-primary-foreground">About</h2>
-            <p className="text-pretty font-mono text-sm text-muted-foreground print:text-[12px]">
+            <h2 className="text-xl font-bold text-foreground">About</h2>
+            <p className="text-pretty text-sm text-muted-foreground print:text-[12px]">
               {RESUME_DATA.summary}
             </p>
           </Section>
           <Section>
-            <h2 className="text-xl font-bold text-primary-foreground">
+            <h2 className="text-xl font-bold text-foreground">
               Work Experience
             </h2>
             {RESUME_DATA.work.map((work) => (
@@ -184,14 +112,16 @@ export default function Page() {
                 <CardHeader className="pb-2">
                   <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-y-2 gap-x-2 text-base">
                     <div className="flex flex-col gap-y-1">
-                      <h3 className="inline-flex items-center gap-x-2 font-semibold leading-none">
+                      <h3 className="flex flex-wrap items-center gap-x-2 gap-y-1 font-semibold leading-none">
                         <a
-                          className="hover:text-primary-foreground"
+                          className="hover:text-primary"
                           href={work.link}
+                          target="_blank"
+                          rel="noopener noreferrer"
                         >
                           {work.company}
                         </a>
-                        <span className="inline-flex gap-x-1">
+                        <span className="inline-flex flex-wrap gap-1">
                           {work.badges.map((badge) => (
                             <Badge
                               variant="secondary"
@@ -219,41 +149,31 @@ export default function Page() {
             ))}
           </Section>
           <Section>
-            <h2 className="text-xl font-bold text-primary-foreground">
+            <h2 className="text-xl font-bold text-foreground">
               Skills
             </h2>
-            <div className="flex flex-wrap gap-1">
-              {RESUME_DATA.skills.map((skill) => {
-                return (
-                  <Badge
-                    className="bg-secondary text-sm text-secondary-foreground hover:bg-primary-foreground/100 print:text-[10px]"
-                    key={skill}
-                  >
-                    {skill}
-                  </Badge>
-                );
-              })}
+            <div className="flex flex-wrap gap-2">
+              {RESUME_DATA.skills.map((group) => (
+                <Badge
+                  key={group.category}
+                  variant="secondary"
+                  className="max-w-full whitespace-normal rounded-xl px-3 py-1.5 text-sm font-medium leading-snug hover:bg-primary hover:text-primary-foreground print:text-[10px]"
+                >
+                  <span className="font-semibold">{group.category}:</span>
+                  &nbsp;{group.items.join(", ")}
+                </Badge>
+              ))}
             </div>
           </Section>
-          <Section className="print-force-new-page scroll-mb-16">
-            <h2 className="text-xl font-bold text-secondary">Projects</h2>
-            <div className="my-4">
-              <Component
-                items={filteredProjects.map((project, idx) => ({
-                  id: idx + 1,
-                  url: {
-                    src: "project-background-image.png",
-                  },
-                  title: project.title,
-                  description: project.description,
-                  tags: project.techStack || [],
-                  githubUrl:
-                    typeof project.link === "string"
-                      ? project.link
-                      : project.link?.href ?? "",
-                }))}
-              />
-            </div>
+          <Section className="print:hidden">
+            <h2 className="text-xl font-bold">GitHub Activity</h2>
+            <GitHubActivity
+              username="harshkasat"
+              variant="white"
+              months={12}
+              showMonths
+              className="w-full"
+            />
           </Section>
         </section>
       </main>
