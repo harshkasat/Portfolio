@@ -7,22 +7,7 @@ import { GlobeIcon, MailIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { RESUME_DATA } from "@/data/resume-data";
 import { ModeToggle } from "@/components/ModeToggle";
-import dynamic from "next/dynamic";
-
-// Below the fold and network-driven: keep it out of the first hydration pass.
-const GitHubActivity = dynamic(
-  () =>
-    import("@/components/ui/github-activity").then((m) => m.GitHubActivity),
-  {
-    ssr: false,
-    loading: () => (
-      <div
-        aria-hidden="true"
-        className="h-[260px] w-full animate-pulse rounded-3xl bg-card"
-      />
-    ),
-  },
-);
+import { GitHubActivity } from "@/components/ui/github-activity";
 
 export default function Page() {
   return (
@@ -163,35 +148,24 @@ export default function Page() {
               </Card>
             ))}
           </Section>
-          <Section reveal>
+          <Section>
             <h2 className="text-xl font-bold text-foreground">
               Skills
             </h2>
-            <div className="flex flex-col gap-y-3">
+            <div className="flex flex-wrap gap-2">
               {RESUME_DATA.skills.map((group) => (
-                <div
+                <Badge
                   key={group.category}
-                  className="flex flex-col gap-y-1.5 sm:flex-row sm:items-baseline sm:gap-x-3"
+                  variant="secondary"
+                  className="max-w-full whitespace-normal rounded-xl px-3 py-1.5 text-sm font-medium leading-snug hover:bg-primary hover:text-primary-foreground print:text-[10px]"
                 >
-                  <span className="shrink-0 text-xs font-semibold uppercase tracking-wide text-muted-foreground sm:w-40 print:text-[10px]">
-                    {group.category}
-                  </span>
-                  <div className="flex flex-wrap gap-1">
-                    {group.items.map((item) => (
-                      <Badge
-                        key={item}
-                        variant="secondary"
-                        className="text-xs hover:bg-primary hover:text-primary-foreground print:text-[10px]"
-                      >
-                        {item}
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
+                  <span className="font-semibold">{group.category}:</span>
+                  &nbsp;{group.items.join(", ")}
+                </Badge>
               ))}
             </div>
           </Section>
-          <Section reveal className="print:hidden">
+          <Section className="print:hidden">
             <h2 className="text-xl font-bold">GitHub Activity</h2>
             <GitHubActivity
               username="harshkasat"
