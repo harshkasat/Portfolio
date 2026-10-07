@@ -403,7 +403,7 @@ const ContributionGrid = ({
     <div
       ref={ref}
       data-slot="github-activity-grid"
-      role="img"
+      role="figure"
       aria-label={label}
       className="relative"
     >
@@ -429,7 +429,7 @@ const ContributionGrid = ({
               style={{ width: cellSize }}
             >
               {month && (
-                <span className="absolute top-0 left-0 text-[10px] leading-none text-current/45">
+                <span className="absolute top-0 left-0 text-[10px] leading-none text-current/70">
                   {month}
                 </span>
               )}
@@ -446,23 +446,27 @@ const ContributionGrid = ({
         {visible.map((week, weekIndex) => (
           <div key={weekIndex} className="flex flex-col" style={{ gap }}>
             {week.map((day) => (
-              <motion.div
+              <div
                 key={day.date}
                 onPointerEnter={hover(day)}
-                className="shrink-0 rounded-[3px] bg-current/15"
-                style={{ width: cellSize, height: cellSize }}
-                initial={reduceMotion ? false : { opacity: 0, scale: 0.4 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{
-                  ...CELL_FADE,
-                  delay: reduceMotion ? 0 : weekIndex * COLUMN_STAGGER,
+                aria-hidden="true"
+                className={cn(
+                  "shrink-0 rounded-[3px] bg-current/15",
+                  !reduceMotion && "gh-cell-in",
+                )}
+                style={{
+                  width: cellSize,
+                  height: cellSize,
+                  animationDelay: reduceMotion
+                    ? undefined
+                    : `${weekIndex * COLUMN_STAGGER}s`,
                 }}
               >
                 <div
                   className="h-full w-full rounded-[3px]"
                   style={scale[day.level] ?? scale[0]}
                 />
-              </motion.div>
+              </div>
             ))}
           </div>
         ))}

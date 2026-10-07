@@ -5,15 +5,13 @@ import {
   ResumeIcon,
 } from "@/components/icons";
 import NotionIcon from "@/components/icons/NotionIcon";
-import { projects } from "./project-data";
 
 export const RESUME_DATA = {
   name: "Harsh Kasat",
   location: "India · Remote",
   locationLink: "https://www.google.com/maps/place/Surat",
-  about:
-    "Infra & Backend Engineer at Freebuff (YC F24) · Sandboxes, Convex, Bun/TypeScript",
-  summary: `I build the infrastructure that runs AI coding agents. At Freebuff (YC F24) I own the sandbox layer: Daytona and E2B fleets, Convex backends, runner services and the sweeps that keep thousands of workspaces healthy. Before that I was a founding engineer at vly.ai (acquired by Freebuff). I learn by shipping, and I have a habit of breaking things on purpose to see how they fail.`,
+  about: "Infrastructure Engineer at Freebuff (YC F24)",
+  summary: `I'm Harsh Kasat. I build the infrastructure that runs AI coding agents. At Freebuff (YC F24) I own the sandbox layer: Daytona and E2B fleets, Convex backends, runner services and the sweeps that keep thousands of workspaces healthy. Before that I was a founding engineer at vly.ai (acquired by Freebuff). I learn by shipping, and I have a habit of breaking things on purpose to see how they fail.`,
   avatarUrl: "/pfp-image.png",
   contact: {
     email: "harshkasat01@gmail.com",
@@ -158,5 +156,4 @@ export const RESUME_DATA = {
     },
     { category: "Observability", items: ["ELK", "PostHog", "Sentry"] },
   ],
-  projects: projects,
 } as const;

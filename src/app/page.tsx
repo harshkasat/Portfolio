@@ -1,5 +1,5 @@
 "use client";
-import { Avatar, AvatarImage } from "@/components/ui/avatar";
+import Image from "next/image";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Section } from "@/components/ui/section";
@@ -7,7 +7,22 @@ import { GlobeIcon, MailIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { RESUME_DATA } from "@/data/resume-data";
 import { ModeToggle } from "@/components/ModeToggle";
-import { GitHubActivity } from "@/components/ui/github-activity";
+import dynamic from "next/dynamic";
+
+// Below the fold and network-driven: keep it out of the first hydration pass.
+const GitHubActivity = dynamic(
+  () =>
+    import("@/components/ui/github-activity").then((m) => m.GitHubActivity),
+  {
+    ssr: false,
+    loading: () => (
+      <div
+        aria-hidden="true"
+        className="h-[260px] w-full animate-pulse rounded-3xl bg-card"
+      />
+    ),
+  },
+);
 
 export default function Page() {
   return (
@@ -28,11 +43,13 @@ export default function Page() {
               </p>
               <p className="max-w-md items-center text-pretty text-xs text-muted-foreground">
                 <a
-                  className="inline-flex gap-x-1.5 align-baseline leading-none "
+                  className="inline-flex gap-x-1.5 align-baseline leading-none"
                   href={RESUME_DATA.locationLink}
                   target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`Location: ${RESUME_DATA.location}`}
                 >
-                  <GlobeIcon className="size-3" />
+                  <GlobeIcon className="size-3" aria-hidden="true" />
                   {RESUME_DATA.location}
                 </a>
               </p>
@@ -46,9 +63,9 @@ export default function Page() {
                   >
                     <a
                       href={`mailto:${RESUME_DATA.contact.email}`}
-                      target="_blank"
+                      aria-label={`Email ${RESUME_DATA.name}`}
                     >
-                      <MailIcon className="size-4" />
+                      <MailIcon className="size-4" aria-hidden="true" />
                     </a>
                   </Button>
                 ) : null}
@@ -60,8 +77,13 @@ export default function Page() {
                     size="icon"
                     asChild
                   >
-                    <a href={social.url} target="_blank">
-                      <social.icon className="size-4" />
+                    <a
+                      href={social.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={social.name === "Resume" ? `CV — ${RESUME_DATA.name}'s resume` : `${RESUME_DATA.name} on ${social.name}`}
+                    >
+                      <social.icon className="size-4" aria-hidden="true" />
                     </a>
                   </Button>
                 ))}
@@ -77,9 +99,15 @@ export default function Page() {
               </div>
             </div>
 
-            <Avatar className="size-28">
-              <AvatarImage alt={RESUME_DATA.name} src={RESUME_DATA.avatarUrl} />
-            </Avatar>
+            <Image
+              src={RESUME_DATA.avatarUrl}
+              alt={`Portrait of ${RESUME_DATA.name}`}
+              width={112}
+              height={112}
+              priority
+              sizes="112px"
+              className="size-28 shrink-0 rounded-xl object-cover"
+            />
           </div>
           <Section>
             <h2 className="text-xl font-bold text-foreground">About</h2>
@@ -103,6 +131,8 @@ export default function Page() {
                         <a
                           className="hover:text-primary"
                           href={work.link}
+                          target="_blank"
+                          rel="noopener noreferrer"
                         >
                           {work.company}
                         </a>
@@ -133,7 +163,7 @@ export default function Page() {
               </Card>
             ))}
           </Section>
-          <Section>
+          <Section reveal>
             <h2 className="text-xl font-bold text-foreground">
               Skills
             </h2>
@@ -161,7 +191,7 @@ export default function Page() {
               ))}
             </div>
           </Section>
-          <Section className="print:hidden">
+          <Section reveal className="print:hidden">
             <h2 className="text-xl font-bold">GitHub Activity</h2>
             <GitHubActivity
               username="harshkasat"

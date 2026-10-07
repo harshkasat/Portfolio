@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Analytics } from "@vercel/analytics/react";
 import { Montserrat, Source_Serif_4, JetBrains_Mono } from "next/font/google";
 import { SpeedInsights } from "@vercel/speed-insights/next";
@@ -67,18 +67,16 @@ export const metadata: Metadata = {
     title: TITLE,
     description: DESCRIPTION,
     siteName: `${RESUME_DATA.name} Portfolio`,
-    images: [{ url: AVATAR_URL, width: 512, height: 512, alt: RESUME_DATA.name }],
     firstName: "Harsh",
     lastName: "Kasat",
     username: "harshkasat",
   },
   twitter: {
-    card: "summary",
+    card: "summary_large_image",
     site: "@harsh__kasat",
     creator: "@harsh__kasat",
     title: TITLE,
     description: DESCRIPTION,
-    images: [AVATAR_URL],
   },
   icons: { icon: "/favicon.ico" },
   appleWebApp: {
@@ -87,24 +85,39 @@ export const metadata: Metadata = {
     statusBarStyle: "black-translucent",
   },
   other: {
-    "theme-color": "#18181b",
     "msapplication-TileColor": "#18181b",
   },
+};
+
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#eceef0" },
+    { media: "(prefers-color-scheme: dark)", color: "#1f2535" },
+  ],
+  width: "device-width",
+  initialScale: 1,
 };
 
 const fontSans = Montserrat({
   subsets: ["latin"],
   variable: "--font-sans",
+  display: "swap",
+  adjustFontFallback: true,
 });
 
+// Not used above the fold: load lazily so they don't compete with the LCP text.
 const fontSerif = Source_Serif_4({
   subsets: ["latin"],
   variable: "--font-serif",
+  display: "swap",
+  preload: false,
 });
 
 const fontMono = JetBrains_Mono({
   subsets: ["latin"],
   variable: "--font-mono",
+  display: "swap",
+  preload: false,
 });
 
 export default function RootLayout({

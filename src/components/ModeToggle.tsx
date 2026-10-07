@@ -4,11 +4,12 @@ import * as React from "react";
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
-import { motion, AnimatePresence } from "framer-motion";
 
 export function ModeToggle() {
-  const { theme, setTheme } = useTheme();
-  const isDark = theme === "dark";
+  const { resolvedTheme, setTheme } = useTheme();
+  const [mounted, setMounted] = React.useState(false);
+  React.useEffect(() => setMounted(true), []);
+  const isDark = mounted && resolvedTheme === "dark";
 
   const toggleTheme = () => {
     const switchTheme = () => setTheme(isDark ? "light" : "dark");
@@ -24,34 +25,17 @@ export function ModeToggle() {
       variant="outline"
       size="icon"
       onClick={toggleTheme}
+      aria-label={isDark ? "Switch to light theme" : "Switch to dark theme"}
       className="relative h-8 w-8 overflow-hidden"
     >
-      <AnimatePresence initial={false} mode="wait">
-        {isDark ? (
-          <motion.div
-            key="moon"
-            initial={{ y: -20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: 20, opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className="absolute"
-          >
-            <Moon className="h-4 w-4" />
-          </motion.div>
-        ) : (
-          <motion.div
-            key="sun"
-            initial={{ y: -20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: 20, opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className="absolute"
-          >
-            <Sun className="h-4 w-4" />
-          </motion.div>
-        )}
-      </AnimatePresence>
-      <span className="sr-only">Toggle theme</span>
+      <Sun
+        aria-hidden="true"
+        className="h-4 w-4 transition-all duration-300 dark:-translate-y-6 dark:opacity-0"
+      />
+      <Moon
+        aria-hidden="true"
+        className="absolute h-4 w-4 translate-y-6 opacity-0 transition-all duration-300 dark:translate-y-0 dark:opacity-100"
+      />
     </Button>
   );
 }
